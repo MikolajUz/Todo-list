@@ -2,9 +2,10 @@ import { project } from "./projects";
 import { toDoItem } from "./todoCreate";
 import { format, parseISO, differenceInDays } from 'date-fns';
 
-var projectArray=[];
-const loadMain = () =>{
 
+var projectArray=[];
+
+const loadMain = () =>{
     const container=document.getElementById('content');
     const top=document.createElement('div');
     const sidebar=document.createElement('div');
@@ -23,7 +24,38 @@ const loadMain = () =>{
     container.appendChild(sidebar);
     container.appendChild(main);
     sidebar.appendChild(addButton)
+    
+    if(JSON.parse(localStorage.getItem('projectArray'))!=null){
+        projectArray=JSON.parse(localStorage.getItem('projectArray'));
+        console.log(projectArray);
+        projectArray.forEach(elem=>{
+            
+    
+        const sidebar=document.querySelector('div.sidebar');
+        const newProj=document.createElement('div');
+        
+        newProj.classList.add('button');
+        newProj.textContent='project';
+        
+        sidebar.appendChild(newProj);
+        newProj.id=elem.array[1];
+        console.log('wczytuje local');
+        newProj.addEventListener('click',e=>{
+        viewProject(elem);
+    
+        })
+        
+        });
+        
+    }
+    
+
 }
+
+
+
+
+
 
 const addProject = () =>{
     const sidebar=document.querySelector('div.sidebar');
@@ -37,12 +69,11 @@ const addProject = () =>{
     
     projectArray[newProj.id].array.push('tytul');
     projectArray[newProj.id].array.push(newProj.id);
-    addTodo(projectArray[newProj.id].array,toDoItem('test2',newProj.id));
-    addTodo(projectArray[newProj.id].array,toDoItem('test3',newProj.id));
+    //addTodo(projectArray[newProj.id].array,toDoItem('test2',newProj.id));
+    addTodo(projectArray[newProj.id].array,toDoItem());
     newProj.addEventListener('click',e=>{
-    //console.log(viewProject(projectArray[newProj.id]));
     viewProject(projectArray[newProj.id]);
-
+    
     });
 
 }
@@ -59,6 +90,9 @@ const editToDo = () =>{
 
 
 const updateToDo = (index) => {
+    console.log('updatetoDOpre')
+    console.log(projectArray)
+
     projectArray[index]=[];
     projectArray[index]=project();
     
@@ -71,11 +105,23 @@ const updateToDo = (index) => {
         addTodo(projectArray[index].array,toDoItem(item[0].value,item[1].value,item[2].value));
     })
 
+    //localStorage.setItem('projectArray', JSON.stringify(projectArray))
+    //console.log('projectArray');
+    //console.log(projectArray);
+
+    //console.log('storage');
+    //console.log(JSON.parse(localStorage.getItem('projectArray')));
+    console.log('updatetoDOpre')
+    console.log(projectArray)
+    
+    
 }
 
 
 const viewProject = (project) =>{
 
+    console.log('vieproject');
+    console.log(project);
     const main=document.querySelector('div.main');
     main.childNodes.forEach(elem=>elem.remove());
 
@@ -141,9 +187,7 @@ const viewProject = (project) =>{
         delProjectButton.addEventListener('click',e=>{
             document.getElementById(project.array[1]).remove();
             document.getElementById('viewProject'+project.array[1]).remove();
-            console.log(projectArray);
-            //projectArray[newProj.id].remove();
-            console.log(projectArray);
+            projectArray.splice([project.array[1]],1);
 
         });
 
@@ -152,6 +196,7 @@ const viewProject = (project) =>{
         addToDoButton.classList.add('material-symbols-outlined');
         addToDoButton.textContent='Add';
         addToDoButton.addEventListener('click',e=>{
+            
             updateToDo(project.array[1]);
             addTodo(projectArray[newProj.id.slice(-1)].array,toDoItem());
             viewProject(projectArray[newProj.id.slice(-1)]);
@@ -163,8 +208,40 @@ const viewProject = (project) =>{
         saveButton.classList.add('material-symbols-outlined');
         saveButton.textContent='save';
         saveButton.addEventListener('click',e=>{
+
         updateToDo(project.array[1]);
         document.querySelectorAll('input').forEach(elem=>elem.disabled=true);
+        localStorage.setItem('projectArray', JSON.stringify(projectArray));
+        console.log('projectArray');
+        console.log(projectArray);
+
+        console.log('storage');
+        console.log(JSON.parse(localStorage.getItem('projectArray')));
+
+        projectArray.forEach(elem=>{
+            
+    
+            const sidebar=document.querySelector('div.sidebar');
+            sidebar.childNodes.forEach(elem2=>{
+                if(elem2.textContent!=='Add project')elem2.remove()
+            })
+            const newProj=document.createElement('div');
+            
+            newProj.classList.add('button');
+            newProj.textContent='project';
+            
+            sidebar.appendChild(newProj);
+            newProj.id=elem.array[1];
+            console.log('przelowanie butona');
+            newProj.addEventListener('click',e=>{
+            viewProject(elem);
+        
+            })
+            
+            });
+
+
+
         })
 
 

@@ -1,7 +1,7 @@
 import './style.css';
 import {toDoItem} from './todoCreate.js';
 import { project } from './projects';
-import {loadMain,viewProject} from './ui';
+import {loadMain,updateStorage,projectArray} from './ui';
 import { formatDistance, subDays } from 'date-fns'
 
 
